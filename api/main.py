@@ -1,15 +1,17 @@
+import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-import numpy as np
-from io import BytesIO
 from PIL import Image
+from io import BytesIO
+import numpy as np
 import tensorflow as tf
 
-app = FastAPI()
 
-# CORS Middleware Configuration
-origins = ["http://localhost", "http://localhost:3000"]
+app = FastAPI()
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -17,32 +19,40 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+model = tf.keras.models.load_model("../models/1.keras")
+class_names = ["Early Blight", "Late Blight", "Healthy"]
 
-# Load the H5 model
-MODEL = tf.keras.models.load_model("../models/1.keras")
 
-# Define the class names
-CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
-@app.get("/ping")
-async def ping():
-    return {"message": "Hello, I am alive"}
-
-def read_file_as_image(data) -> np.ndarray:
-    image = np.array(Image.open(BytesIO(data)))
+def read_file_as_image(data) -> Image.Image:
+    image = np.array(Image.open(BytesIO(data)).convert('RGB'))
     return image
 
-@app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    image = read_file_as_image(await file.read())
-    img_batch = np.expand_dims(image, axis=0)
-    predictions = MODEL.predict(img_batch)
-    predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
+
+def predict(image):
+    img_array = tf.keras.preprocessing.image.img_to_array(image)
+    img_array = tf.expand_dims(img_array, 0)  # Create a batch
+
+    predictions = model.predict(img_array)
+    print(type(predictions))
+    predicted_class = class_names[np.argmax(predictions[0])]
     confidence = np.max(predictions[0])
-    return {
-        "class": predicted_class,
-        "confidence": float(confidence)
-    }
+    return predicted_class, confidence
+
+
+@app.get("/alive")
+async def alive():
+    return {"status": "Alive"}
+
+
+@app.post("/predict")
+async def predict_endpoint(
+    file: UploadFile = File(...),
+):
+    image = read_file_as_image(await file.read())
+    predicted_class, confidence = predict(image)
+    print(predicted_class, confidence)
+    return {"class": predicted_class, "confidence": float(confidence)}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)

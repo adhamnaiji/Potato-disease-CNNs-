@@ -1,8 +1,17 @@
 model_config_list {
- config {
-    name: 'potatoes_model'
-    base_path: 'C:/Users/adhem/potato-disease/models/potatoes_model'
+  config {
+    name: '1'
+    base_path: '/models/1'
     model_platform: 'tensorflow'
-    model_version_policy: {all: {}}
-        }
+  }
+  config {
+    name: '2'
+    base_path: '/models/2'
+    model_platform: 'tensorflow'
+  }
+  config {
+    name: '3'
+    base_path: '/models/3'
+    model_platform: 'tensorflow'
+  }
 }
