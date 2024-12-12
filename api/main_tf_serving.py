@@ -25,6 +25,7 @@ endpoint = "http://localhost:8501/v1/models/potatoes_model:predict"
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
+
 @app.get("/ping")
 async def ping():
     return "Hello, I am alive"
@@ -57,6 +58,6 @@ async def predict(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=8000)
+    uvicorn.run(app, host='localhost', port=8001)
 
 #this is the request that should be written to run docker docker run -p 8501:8501 --name=tf_serving_potatoes -v C:/Users/adhem/potato-disease/models:/models -v C:/Users/adhem/potato-disease/models.config.examples:/models/config/model.config -e MODEL_NAME=potatoes_model tensorflow/serving

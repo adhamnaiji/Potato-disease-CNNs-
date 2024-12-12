@@ -5,7 +5,7 @@ import React from "react";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Paper, CardActionArea, CardMedia, Grid, TableContainer, Table, TableBody, TableHead, TableRow, TableCell } from "@material-ui/core";
-import image from "./bg.png";
+import image from "./hh.jpg";
 import { DropzoneArea } from 'material-ui-dropzone';
 
 import axios from "axios";
@@ -125,14 +125,14 @@ export const ImageUpload = () => {
   const [data, setData] = useState();
   const [image, setImage] = useState(false);
   let confidence = 0;
-  // Memoizing the sendFile function with useCallback
+
   const sendFile = useCallback(async () => {
     if (image) {
       let formData = new FormData();
       formData.append("file", selectedFile);
       let res = await axios({
         method: "post",
-        url:"http://localhost:8000/predict",
+        url:"http://localhost:8001/predict",
         data: formData,
       });
 
@@ -140,9 +140,8 @@ export const ImageUpload = () => {
         setData(res.data);
       }
     }
-  }, [image, selectedFile]); // added dependencies to sendFile
+  }, [image, selectedFile]);
 
-  // This effect updates preview when selectedFile changes
   useEffect(() => {
     if (!selectedFile) {
       setPreview(undefined);
@@ -200,7 +199,7 @@ export const ImageUpload = () => {
               {!image && <CardContent className={classes.content}>
                 <DropzoneArea
                   acceptedFiles={['image/*']}
-                  dropzoneText={"Drag and drop an image of a potato plant leaf to process"}
+                  dropzoneText={"Drag and drop an image of a potato "}
                   onChange={onSelectFile}
                 />
               </CardContent>}
