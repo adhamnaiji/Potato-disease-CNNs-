@@ -165,7 +165,6 @@ Potato-disease-CNNs-/
 ├── images/                   # Sample images and results
 │
 ├── requirements.txt          # Python dependencies
-├── LICENSE                   # Project license
 └── README.md                # This file
 🔮 Future Improvements
  Deploy as web application using Flask/FastAPI
